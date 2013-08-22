@@ -14,25 +14,18 @@ var MyApp = function() {
   ];
 
   this.init = [
-    this.loadPlugins
+    this.handleSignals,
+    this.loadPlugins,
+    function(next) {
+      setTimeout(function() {
+        throw new Error('Hey :D');
+      }, 500);
+    }
   ];
 
   this.exit = [
     this.unloadPlugins
   ];
-
-  var app = this;
-  process.on('SIGINT', function() {
-    app.stop(function(err) {
-      if(err) {
-        console.error(err);
-        process.exit(1);
-      } else {
-        console.log('App stopped !')
-        process.exit(0);
-      }
-    });
-  });
 
 };
 
@@ -40,19 +33,45 @@ util.inherits(MyApp, App);
 
 var p = MyApp.prototype;
 
-p.beforeInitStep = function() {
-  console.log('Before init step');
+p.handleSignals = function(next) {
+  var self = this;
+
+  process.once('SIGINT', function() {
+    console.log('SIGINT signal intercepted. Stopping application...');
+    app.stop(function(err) {
+      if(err) {
+        console.error(err.stack);
+        process.exit(1);
+      } else {
+        process.exit(0);
+      }
+    });
+  });
+
+  process.nextTick(next);
+
 };
 
 var app = new MyApp();
 
+console.error('Starting App...');
+
+app.on('load', function(pluginId) {
+  console.log('Loading', pluginId);
+});
+
+app.on('unload', function(pluginId) {
+  console.log('Unloading', pluginId);
+});
+
 app.start(function(err) {
   if(err) {
-    console.error(err);
+    console.error('Start error !', err.stack);
   } else {
     console.log('App started !')
     setInterval(function() {
       console.log('Doing some work...')
-    }, 5000);
+    }, 2000);
   }
 });
+
