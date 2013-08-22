@@ -38,7 +38,7 @@ p.handleSignals = function(next) {
 
   process.once('SIGINT', function() {
     console.log('SIGINT signal intercepted. Stopping application...');
-    app.stop(function(err) {
+    app.terminate(function(err) {
       if(err) {
         console.error(err.stack);
         process.exit(1);
@@ -64,7 +64,7 @@ app.on('unload', function(pluginId) {
   console.log('Unloading', pluginId);
 });
 
-app.start(function(err) {
+app.initialize(function(err) {
   if(err) {
     console.error('Start error !', err.stack);
   } else {
