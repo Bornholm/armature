@@ -1,6 +1,6 @@
 {
   "name": "armature",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Small app framework with plugins capabilities",
   "main": "index.js",
   "scripts": {
