@@ -1,6 +1,6 @@
 module.exports = exports = {
 
-  unload: function(next) {
+  unload: function(options, next) {
     console.log('Plugin one unloaded !');
     next();
   }
