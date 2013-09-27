@@ -25,7 +25,6 @@ Ainsi, si la propriété _name_ de l'application a la valeur "foo", l'applicatio
 
 **Exemple:**
 ```
-
 // Application
 var FooApp = function() {
   this.name = 'foo';
@@ -59,25 +58,16 @@ Exécute séquentiellement toutes les étapes de fermeture enregistrées dans l'
 
 - **cb(err)**  _Function_  Appelée après l'exécution de toutes les étapes de fermeture.
 
-### app.terminate( _cb_ )
-
-Exécute séquentiellement toutes les étapes de fermeture enregistrées dans l'application.
-
-#### Paramètres
-
-- **cb(err)**  _Function_  Appelée après l'exécution de toutes les étapes de fermeture.
-
 ### app.addInitSteps( _step,..._ )
 
 Ajoute des étapes à la phase d'initialisation de l'application.
 
 #### Paramètres
 
-- **steps,...**  _Function_  Fonctions asynchrones seront appelées séquentiellement.
+- **step(next),...**  _Function_  Étapes d'initialisation de l'application.
 
 **Exemple**
 ```
-
 var dbStep = function(next) {
   // this == app
   this.database.findAll(function(err, records) {
@@ -104,7 +94,6 @@ app.initialize(function(err) {
       // All good !
     }
 });
-
 ```
 
 ### app.addTermSteps( _step,..._ )
@@ -113,7 +102,7 @@ Ajoute des étapes à la phase de fermeture de l'application.
 
 #### Paramètres
 
-- **steps,...**  _Function_  Fonctions asynchrones seront appelées séquentiellement.
+- **step(next),...**  _Function_  Étapes de fermeture de l'application.
 
 Même fonctionnement que _addInitSteps()_.
 
@@ -177,10 +166,12 @@ module.exports = {
   
   load: function(opts) {
     // Chargement du plugin
+    // this == app
   },
 
   unload: function(opts) {
     // Déchargement du plugin
+    // this == app
   }
 
 }
