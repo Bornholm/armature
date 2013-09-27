@@ -4,28 +4,21 @@ var App = require('../lib/app.js');
 
 var MyApp = function() {
 
-  App.call(this);
-
   this.name = 'test';
 
-  this.plugins = [
-    './plugins/plugin-one',
-    './plugins/plugin-two'
-  ];
+  this.registerPlugins(
+    {path: './plugins/plugin-one'},
+    {path: './plugins/plugin-two', opts: {foo: 'bar'}}
+  );
 
-  this.init = [
-    this.handleSignals,
-    this.loadPlugins,
-    function(next) {
-      setTimeout(function() {
-        throw new Error('Hey :D');
-      }, 500);
-    }
-  ];
+  this.addInitSteps(
+    this.startHandlingSignals,
+    this.loadPlugins
+  );
 
-  this.exit = [
+  this.addTermSteps(
     this.unloadPlugins
-  ];
+  );
 
 };
 
@@ -33,7 +26,7 @@ util.inherits(MyApp, App);
 
 var p = MyApp.prototype;
 
-p.handleSignals = function(next) {
+p.startHandlingSignals = function(next) {
   var self = this;
 
   process.once('SIGINT', function() {
