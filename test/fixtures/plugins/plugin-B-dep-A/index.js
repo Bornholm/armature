@@ -1,5 +1,5 @@
 
 exports.load = function(opts, cb) {
-	this.pluginA = true;
+	this.pluginBDepA = true;
 	return cb();
 };

@@ -1,5 +1,7 @@
 module.exports = exports = {
-  App: require('./lib/app'),
+  PluginContainer: require('./lib/plugin-container'),
   DependencyGraph: require('./lib/dependency-graph'),
-  Error: require('./lib/error')
+  Loaders: {
+    NpmPluginLoader: require('./lib/loaders/npm-plugin-loader')
+  }
 };
