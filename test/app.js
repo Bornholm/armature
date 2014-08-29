@@ -8,7 +8,7 @@ describe('App', function() {
 	it('should instanciate an App', function() {
 			
 		var pluginLoader = new NpmPluginLoader();
-		var app = new App(pluginLoader);
+		var app = new App('Test', pluginLoader);
 
 		assert.ok(app instanceof App);
 		
@@ -17,7 +17,7 @@ describe('App', function() {
 	it('should use a plugin', function() {
 			
 			var pluginLoader = new NpmPluginLoader();
-			var app = new App(pluginLoader);
+			var app = new App('Test', pluginLoader);
 
 			app.use('./fixtures/plugin-A');
 			
@@ -26,7 +26,7 @@ describe('App', function() {
 	it('should use multiples plugins', function() {
 		
 		var pluginLoader = new NpmPluginLoader();
-		var app = new App(pluginLoader);
+		var app = new App('Test', pluginLoader);
 
 		app.use(
 			{ path: './fixtures/plugin-A' },
@@ -38,7 +38,7 @@ describe('App', function() {
 	it('should not accept an invalid plugin', function() {
 		
 		var pluginLoader = new NpmPluginLoader();
-		var app = new App(pluginLoader);
+		var app = new App('Test', pluginLoader);
 
 		assert.throws(function() {
 			app.use();
@@ -49,12 +49,14 @@ describe('App', function() {
 	it('should load a npm plugin', function(done) {
 		
 		var pluginLoader = new NpmPluginLoader();
-		var app = new App(pluginLoader);
+		var app = new App('Test', pluginLoader);
 
-		app.use('./fixtures/plugins/plugins-A');
+		app.use(__dirname + '/fixtures/plugins/plugin-A');
 
 		app.loadPlugins(function(err) {
 			assert.ifError(err);
+			assert.ok(app.pluginA);
+			return done();
 		});
 		
 	});
