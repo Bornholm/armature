@@ -5,7 +5,7 @@ describe('DependencyGraph', function() {
 	var DependencyGraph = require('../lib/dependency-graph');
 
 	describe('addNode', function() {
-		
+
 		it('should add a node', function() {
 
 			var g = new DependencyGraph();
@@ -17,7 +17,7 @@ describe('DependencyGraph', function() {
 	});
 
 	describe('getCycles', function() {
-		
+
 		it('should find a cycle', function() {
 
 			var g = new DependencyGraph();
@@ -35,11 +35,11 @@ describe('DependencyGraph', function() {
 			assert.equal(cycles.length, 1);
 
 		});
-		
+
 	});
 
 	describe('getUnmetDependencies', function() {
-		
+
 		it('should find an unmet dependency', function() {
 
 			var g = new DependencyGraph();
@@ -53,7 +53,7 @@ describe('DependencyGraph', function() {
 			assert.equal(unmetDeps.length, 1);
 
 		});
-		
+
 	});
 
 });

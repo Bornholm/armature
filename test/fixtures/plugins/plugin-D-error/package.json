@@ -1,5 +1,5 @@
 {
-	"name": "plugin-B-dep-A",
+	"name": "plugin-D-error",
 	"version": "v0.0.0",
 	"TestPlugin": {
 		"plugin-A-no-dep": "v0.0.0"

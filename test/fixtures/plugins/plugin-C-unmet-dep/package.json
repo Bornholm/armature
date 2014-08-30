@@ -1,7 +1,7 @@
 {
 	"name": "plugin-C-unmet-dep",
 	"version": "v0.0.0",
-	"pluginTest": {
+	"TestPlugin": {
 		"plugin-A-no-dep": "v1.0"
 	}
 }

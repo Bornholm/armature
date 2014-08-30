@@ -72,6 +72,48 @@ describe('PluginContainer', function() {
 
 		});
 
+		it('should detect unmet dependencies', function(done) {
+
+			var container = new PluginContainer('Test');
+
+			container.use( __dirname + '/fixtures/plugins/plugin-C-unmet-dep');
+
+			container.loadPlugins(function(err) {
+				assert.ok(err);
+				assert.ok(err.message.indexOf('One or more plugins have unmet dependencies') !== -1);
+				return done();
+			});
+
+		});
+
+		it('should handle sync error in plugin call', function(done) {
+
+			var container = new PluginContainer('Test');
+
+			container.use( __dirname + '/fixtures/plugins/plugin-A-no-dep');
+			container.use( __dirname + '/fixtures/plugins/plugin-D-error');
+
+			container.loadPlugins(function(err) {
+				assert.equal(err.message, 'PluginDError');
+				return done();
+			});
+
+		});
+
+		it('should handle async error in plugin call', function(done) {
+
+			var container = new PluginContainer('Test');
+
+			container.use( __dirname + '/fixtures/plugins/plugin-A-no-dep');
+			container.use( __dirname + '/fixtures/plugins/plugin-E-async-error');
+
+			container.loadPlugins(function(err) {
+				assert.equal(err.message, 'PluginEError');
+				return done();
+			});
+
+		});
+
 	});
 
 });
