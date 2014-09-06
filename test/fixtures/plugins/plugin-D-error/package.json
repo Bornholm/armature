@@ -1,7 +1,7 @@
 {
 	"name": "plugin-D-error",
 	"version": "v0.0.0",
-	"TestPlugin": {
+	"pluginDependencies": {
 		"plugin-A-no-dep": "v0.0.0"
 	}
 }

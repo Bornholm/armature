@@ -12,15 +12,16 @@ describe('NpmPluginLoader', function() {
 
   });
 
-  it('should get a plugin manifest', function(done) {
+  it('should get a plugin informations', function(done) {
 
     var pluginLoader = new NpmPluginLoader();
     var pluginPath = __dirname + '/fixtures/plugins/plugin-A-no-dep';
 
-    pluginLoader.getManifest(pluginPath, function(err, manifest) {
+    pluginLoader.getPluginInfos(pluginPath, function(err, pluginName, version, dependencies) {
       assert.ifError(err);
-      assert.ok(manifest);
-      assert.equal(manifest.name, 'plugin-A-no-dep');
+      assert.equal(pluginName, 'plugin-A-no-dep');
+      assert.equal(version, 'v0.0.0');
+      assert.equal(dependencies, undefined);
       return done();
     });
 
