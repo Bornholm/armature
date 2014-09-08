@@ -93,4 +93,36 @@ describe('Hooks', function() {
 
   });
 
+  describe('.wrapAsync()', function() {
+
+    it('should create a hookable function', function() {
+
+      function foo() {}
+
+      assert.doesNotThrow(function() {
+        var hookableFoo = Hooks.wrapAsync(foo);
+        assert.ok(hookableFoo.before);
+        assert.ok(hookableFoo.after);
+      });
+
+    });
+
+    function echoAsync(msg, cb) {
+      return cb(null, msg);
+    }
+
+    it('should not alter the function behavior by default', function(done) {
+
+      var hookableEchoAsync = Hooks.wrapAsync(echoAsync);
+
+      hookableEchoAsync(1337, function(err, result) {
+        assert.ifError(err);
+        assert.strictEqual(result, 1337);
+        done();
+      });
+
+    });
+
+  });
+
 });
