@@ -1,189 +1,154 @@
 # Armature
 
-Module d'aide à la création d'application
+Plugin container system for NodeJS
 
-## Fonctionnalités
-
-- Architecture de plugins basée sur les modules NPM
-- Système d'interdépendance des plugins basé sur [Semver](https://github.com/mojombo/semver/blob/master/semver.md)
-- Séquences d'initialisation & de fermeture de l'application avec étapes asynchrones
+**Warning** This module is under active development. Don't use in production yet.
 
 # Documentation
 
-- [App](#armatureapp)
-- [Error](#armatureerror)
+- [PluginContainer](#armatureplugincontainer)
+- [PluginLoader](#armaturepluginloader)
 - [DependencyGraph](#armaturedependencygraph)
 - [Plugins](#plugins)
 
-## Armature.App
+## Armature.PluginContainer
 
-### app.name
+### Example
+```js
+var PluginContainer = require('armature').PluginContainer;
 
-Utilisé par le système de plugins pour identifier la section des dépendances dans le fichier _package.json_.
-Ainsi, si la propriété _name_ de l'application a la valeur "foo", l'application va utiliser la section
-"fooPlugin" dans le fichier _package.json_ des plugins pour calculer leurs dépendances.
+var container = new PluginContainer('myContainer');
 
-**Exemple:**
-```
-// Application
-var FooApp = function() {
-  this.name = 'foo';
-}
+container.use('my-plugin', { 'foo': 'bar' }); // -> Use my-plugin module
+container.use(__dirname + '/plugins/my-other-plugin'); // -> Use ./plugins/my-other-plugin
 
-// Fichier package.json d'un plugin
-{
-  "name": "fooFirstPlugin",
-  "version": "v0.0.0",
-  "fooPlugin": {
-    "fooSecondPlugin": "v0.0.1"
+// Load all registered plugins
+container.loadPlugins(function(err) {
+
+  if(err) {
+    console.log(err.stack);
+    return;
   }
-}
 
-// Le plugin fooFirstPlugin a une dépendance vers le plugin fooSecondPlugin en version v.0.0.1.
-```
+  var pluginsContext = container.getContext();
 
-### app.initialize( _cb_ )
-
-Exécute séquentiellement toutes les étapes d'initialisation enregistrées dans l'application.
-
-#### Paramètres
-
-- **cb(err)**  _Function_  Appelée après l'exécution de toutes les étapes d'initialisation.
-
-### app.terminate( _cb_ )
-
-Exécute séquentiellement toutes les étapes de fermeture enregistrées dans l'application.
-
-#### Paramètres
-
-- **cb(err)**  _Function_  Appelée après l'exécution de toutes les étapes de fermeture.
-
-### app.addInitSteps( _step,..._ )
-
-Ajoute des étapes à la phase d'initialisation de l'application.
-
-#### Paramètres
-
-- **step(next),...**  _Function_  Étapes d'initialisation de l'application.
-
-**Exemple**
-```
-var dbStep = function(next) {
-  // this == app
-  this.database.findAll(function(err, records) {
-    if(err) {
-      return next(err);
-    } else {
-      // Travailler avec les records
-      return next();
-    }
-  }); 
-};
-
-var fooStep = function(next) {
-  console.log('foo !');
-  return process.nextTick(next);
-};
-
-app.addInitSteps(fooStep, dbStep);
-
-app.initialize(function(err) {
-    if(err) {
-      // Quelque chose ne s'est pas déroulé correctement dans la phase d'initialisation
-    } else {
-      // All good !
-    }
 });
+
 ```
 
-### app.addTermSteps( _step,..._ )
+### var p = new PluginContainer( _name_[, _context_, _loader_] )
 
-Ajoute des étapes à la phase de fermeture de l'application.
+Create a new plugin container
 
-#### Paramètres
+### Parameters
 
-- **step(next),...**  _Function_  Étapes de fermeture de l'application.
+- **name** The namespace of the plugin container (used in plugin loaders)
+- **context** The plugins' context of execution (see examples)
+- **loader** The plugin loader used in this container, default [NPMPluginLoader]()
 
-Même fonctionnement que _addInitSteps()_.
+### pluginContainer.use( _pluginPath_, _pluginOpts_ )
 
-### app.registerPlugin( _pluginPath_, _pluginOpts_ )
+Register a new plugin into the container
 
-Enregistre un nouveau plugin dans l'application.
+#### Parameters
 
-#### Paramètres
-
-- **pluginPath**  _String_  Chemin d'accès au dossier de plugin. Le plugin sera chargé via la méthode _require()_.
-- **pluginOpts**  _Object_  Options à passer au plugin lors de son initialisation.
-
+- **pluginPath**  _String_  Path to access the plugin. See [plugin loaders](#armaturepluginloader)
+- **pluginOpts**  _Object_  Options to pass to the plugin
 
 ### app.loadPlugins( _cb_ )
 
-Initialise l'ensemble des plugins chargés dans l'application, dans l'ordre des dépendances de ceux ci.
-La méthode loadPlugins est pensée pour s'intégrer dans la séquence d'initialisation de l'application (voir _addInitStep()_);
+Load all registered plugins, ordered by dependencies.
 
-Voir la section **Plugins**
+See [Plugins](#plugins)
 
-#### Paramètres
+#### Parameters
 
-- **cb(err)**  _Function_  Appelée après l'initialisation de tous les plugins.
+- **cb(err)**  _Function_
 
-## Armature.Error
+### app.unloadPlugins( _cb_ )
 
-Classe utilitaire de personnalisation des erreurs. 
-Capture la pile d'appels au moment de l'instanciation.
+Unload all registered plugins, reverse ordered by dependencies.
 
-### Utilisation
-```
-var ArmatureError = require('armature').Error;
+See [Plugins](#plugins)
 
-// Usage: new ArmatureError(opts)
+#### Parameters
 
-var err = new ArmatureError({
-  name: 'MyError',
-  message: 'This is my error. There are many like it, but this one is mine.',
-  status: 500 // Propriété personnalisée
-});
-
-console.log(err.status) // -> 500;
-```
+- **cb(err)**  _Function_
 
 ## Armature.DependencyGraph
 
-Classe de calcul des dépendances entre les plugins.
-
+TODO
 
 ## Plugins
 
-Un plugin Armature prend simplement la forme d'un module NPM avec un fichier _package.json_.
+### Loaders
 
-### Module
+TODO
 
-Le module sera chargé via la méthode _require()_.
+### NPM Plugin Loader
 
-```
-// index.js
-module.exports = {
-  
-  load: function(opts) {
-    // Chargement du plugin
-    // this == app
-  },
+NPM module-based plugin loader
 
-  unload: function(opts) {
-    // Déchargement du plugin
-    // this == app
+#### Example
+
+```js
+// my-app/app.js
+
+var PluginContainer = require('armature').PluginContainer;
+
+var container = new PluginContainer('myApp');
+
+container.use('my-plugin', { foo: 'bar' }); // -> Use my-plugin module
+
+// Load all registered plugins
+container.loadPlugins(function(err) {
+
+  if(err) {
+    console.log(err, err.stack);
+    return;
   }
 
-}
+  var pluginsContext = container.getContext();
+
+});
+
 ```
-Les méthodes exposées par le plugin _load_ et _unload_ seront exécutées par l'application pendant les phases d'initialisation et de fermeture de l'application (voir méthodes _initialize()_ et _terminate()_ de App).
 
-Le paramètre _opts_ correspond aux options passées en second paramètre de la méthode _registerPlugin()_.
+```js
+// my-app/node_modules/my-plugin/package.json
+{
+  "name": "my-plugin",
+  "version": "v0.0.1",
+  "myAppPlugin": {
+    "my-other-plugin": "v0.0.1"
+  }
+}
 
-Voir les exemples pour plus d'informations.
+```
 
+```js
+// my-app/node_modules/my-plugin/index.js
 
+module.exports = {
 
+  // If defined, invoked when pluginContainer.loadPlugins() is called
+  load: function(pluginOpts, done) {
+    // pluginOpts == {foo: 'bar'}
+    // this == pluginContainer.getContext()
+    return done();
+  },
 
+  // If defined, invoked when pluginContainer.unloadPlugins() is called
+  unload: function(pluginOpts, done) {
+    // pluginOpts == {foo: 'bar'}
+    // this == pluginContainer.getContext()
+    return done();
+  }
 
+};
 
+```
+
+## Licence
+
+GPL

@@ -1,7 +1,0 @@
-{
-  "name": "plugin-one",
-  "version": "v0.0.0",
-  "testPlugin": {
-    "plugin-two": "v0.0.0"
-  }
-}
