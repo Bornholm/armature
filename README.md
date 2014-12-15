@@ -13,8 +13,8 @@ Plugin container system for NodeJS
 
 ## Armature.PluginContainer
 
-### Example ###
-```
+### Example
+```js
 var PluginContainer = require('armature').PluginContainer;
 
 var container = new PluginContainer('myContainer');
@@ -35,6 +35,16 @@ container.loadPlugins(function(err) {
 });
 
 ```
+
+### var p = new PluginContainer( _name_[, _context_, _loader_] )
+
+Create a new plugin container
+
+### Parameters
+
+- **name** The namespace of the plugin container (used in plugin loaders)
+- **context** The plugins' context of execution (see examples)
+- **loader** The plugin loader used in this container, default [NPMPluginLoader]()
 
 ### pluginContainer.use( _pluginPath_, _pluginOpts_ )
 
@@ -81,7 +91,7 @@ NPM module-based plugin loader
 
 #### Example
 
-```
+```js
 // my-app/app.js
 
 var PluginContainer = require('armature').PluginContainer;
@@ -104,9 +114,8 @@ container.loadPlugins(function(err) {
 
 ```
 
-```
+```js
 // my-app/node_modules/my-plugin/package.json
-
 {
   "name": "my-plugin",
   "version": "v0.0.1",
@@ -117,25 +126,29 @@ container.loadPlugins(function(err) {
 
 ```
 
-```
+```js
 // my-app/node_modules/my-plugin/index.js
 
 module.exports = {
 
   // If defined, invoked when pluginContainer.loadPlugins() is called
-  load: function(pluginOpts, next) {
+  load: function(pluginOpts, done) {
     // pluginOpts == {foo: 'bar'}
     // this == pluginContainer.getContext()
-    return next();
+    return done();
   },
 
   // If defined, invoked when pluginContainer.unloadPlugins() is called
-  unload: function(pluginOpts, next) {
+  unload: function(pluginOpts, done) {
     // pluginOpts == {foo: 'bar'}
     // this == pluginContainer.getContext()
-    return next();
+    return done();
   }
 
 };
 
 ```
+
+## Licence
+
+GPL
